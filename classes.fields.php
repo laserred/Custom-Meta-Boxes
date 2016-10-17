@@ -682,9 +682,13 @@ class CMB_Date_Field extends CMB_Field {
 		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
 
-	public function html() { ?>
+	public function html() {
+		// If the user has set a cols arg of less than 6 columns, allow the intput
+		// to go full-width.
+		$classes = ( is_int( $this->args['cols'] ) && $this->args['cols'] <= 6 ) ? 'cmb_datepicker' : 'cmb_text_small cmb_datepicker' ;
+		?>
 
-		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
+		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( $classes ); ?> type="text" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
 
 	<?php }
 }
@@ -1652,7 +1656,6 @@ class CMB_Gmap_Field extends CMB_Field {
 				'default_zoom'                => '8',
 				'string-marker-title'         => esc_html__( 'Drag to set the exact location', 'cmb' ),
 				'string-gmaps-api-not-loaded' => esc_html__( 'Google Maps API not loaded.', 'cmb' ),
-				'google_api_key'              => '',
 			)
 		);
 	}
@@ -1660,10 +1663,8 @@ class CMB_Gmap_Field extends CMB_Field {
 	public function enqueue_scripts() {
 
 		parent::enqueue_scripts();
-		
-		if ( empty( $this->args['google_api_key'] ) ){ return false; } 
- 
-		wp_enqueue_script( 'cmb-google-maps', '//maps.google.com/maps/api/js?libraries=places&key='.$this->args['google_api_key'] );
+
+		wp_enqueue_script( 'cmb-google-maps', '//maps.google.com/maps/api/js?libraries=places' );
 		wp_enqueue_script( 'cmb-google-maps-script', trailingslashit( CMB_URL ) . 'js/field-gmap.js', array( 'jquery', 'cmb-google-maps' ) );
 
 		wp_localize_script( 'cmb-google-maps-script', 'CMBGmaps', array(
