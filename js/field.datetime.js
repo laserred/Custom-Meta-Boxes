@@ -27,7 +27,7 @@ CMB.addCallbackForInit( function() {
 
 	// Datepicker
 	jQuery('.cmb_datepicker').each(function () {
-		jQuery(this).datepicker({ dateFormat: 'mm/dd/yy' });
+		jQuery(this).datepicker({ dateFormat: 'dd/mm/yy' });
 	});
 	
 	// Wrap date picker in class to narrow the scope of jQuery UI CSS and prevent conflicts
