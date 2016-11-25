@@ -728,15 +728,17 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 
 	public function html() { ?>
 
-		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" <?php $this->name_attr(); ?>  value="<?php echo $this->value ? esc_attr( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
+		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" <?php $this->name_attr(); ?>  value="<?php echo $this->value ? esc_attr( date( 'd\/m\/Y', $this->value ) ) : '' ?>" />
 
 	<?php }
 
 	public function parse_save_values() {
 
-		foreach( $this->values as &$value )
-			$value = new DateTime::createFromFormat('!d/m/Y', $value)->getTimestamp();
-
+		foreach( $this->values as &$value ){
+			$arr = explode('/',$value);
+			$usDate = $arr[1].'/'.$arr[0].'/'.$arr[2];
+			$value = strtotime($usDate);
+		}
 		sort( $this->values );
 
 	}
@@ -773,9 +775,10 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 		foreach( $this->values as $key => &$value ) {
 			if ( empty( $value['date'] ) )
 				unset( $this->values[$key] );
-			else	
-				$value['date'] = new DateTime::createFromFormat('!d/m/Y H:i', $value['date'].' '.$value['time'])->getTimestamp();
-				//$value = strtotime( $value['date'] . ' ' . $value['time'] );
+			else
+				$arr = explode('/',$value['date']);
+				$value['date'] = $arr[1].'/'.$arr[0].'/'.$arr[2];
+				$value = strtotime( $value['date'] . ' ' . $value['time'] );
 		}
 
 		$this->values = array_filter( $this->values );
@@ -1661,9 +1664,9 @@ class CMB_Gmap_Field extends CMB_Field {
 	public function enqueue_scripts() {
 
 		parent::enqueue_scripts();
-		
-		if ( empty( $this->args['google_api_key'] ) ){ return false; } 
- 
+
+		if ( empty( $this->args['google_api_key'] ) ){ return false; }
+
 		wp_enqueue_script( 'cmb-google-maps', '//maps.google.com/maps/api/js?libraries=places&key='.$this->args['google_api_key'] );
 		wp_enqueue_script( 'cmb-google-maps-script', trailingslashit( CMB_URL ) . 'js/field-gmap.js', array( 'jquery', 'cmb-google-maps' ) );
 
