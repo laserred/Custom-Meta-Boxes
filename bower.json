@@ -16,6 +16,6 @@
     "tests"
   ],
   "dependencies": {
-    "select2": "~3.5.1"
+    "select2": "~4.0.3"
   }
 }
